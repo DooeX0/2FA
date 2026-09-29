@@ -1,213 +1,498 @@
 <!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#17191c">
-  <meta name="description" content="Генератор одноразовых кодов 2FA по секретному ключу Base32.">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <title>2FA Code Generator</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #17191c;
-      color: #d9dce2;
-      font-synthesis: none;
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-      --muted: #858b96;
-      --line: #34373c;
-      --blue: #91a9d0;
-      --accent: #7395cc;
-    }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#17191c" />
+    <meta
+      name="description"
+      content="Генератор одноразовых кодов 2FA по секретному ключу Base32."
+    />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <title>2FA Code Generator</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background: #17191c;
+        color: #d9dce2;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        --muted: #858b96;
+        --line: #34373c;
+        --blue: #91a9d0;
+        --accent: #7395cc;
+      }
 
-    * { box-sizing: border-box; }
-    body { min-width: 320px; min-height: 100vh; margin: 0; }
-    button, input { font: inherit; }
-    .page { width: min(100% - 32px, 760px); min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      .page {
+        width: min(100% - 32px, 760px);
+        min-height: 100vh;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+      }
 
-    main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 0; text-align: center; }
-    h1 { margin: 0 0 24px; color: #d2d4d8; font-size: clamp(27px, 5vw, 32px); font-weight: 700; letter-spacing: .01em; }
+      main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 0;
+        text-align: center;
+      }
+      h1 {
+        margin: 0 0 24px;
+        color: #d2d4d8;
+        font-size: clamp(27px, 5vw, 32px);
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
 
-    .secret-form { position: relative; width: min(100%, 448px); margin: 0 auto; }
-    .secret-input {
-      width: 100%; height: 49px; padding: 0 46px 0 17px;
-      border: 1px solid #3c3f44; border-radius: 6px; outline: none;
-      background: #1a1c1f; color: #e6e8ec; text-align: center;
-      font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 14px; letter-spacing: .04em;
-      transition: border-color .18s, box-shadow .18s;
-    }
-    .secret-input::placeholder { color: #777e89; opacity: 1; }
-    .secret-input:focus { border-color: #718dbb; box-shadow: 0 0 0 3px #718dbb24; }
-    .clear-button { position: absolute; top: 7px; right: 7px; width: 35px; height: 35px; display: none; place-items: center; border: 0; border-radius: 5px; background: transparent; color: #9097a2; cursor: pointer; }
-    .clear-button:hover { background: #2a2d31; color: #e3e6eb; }
-    .secret-form.has-value .clear-button { display: grid; }
-    .error { min-height: 19px; margin: 9px 0 0; color: #df8d8d; font-size: 12px; }
+      .secret-form {
+        position: relative;
+        width: min(100%, 448px);
+        margin: 0 auto;
+      }
+      .secret-input {
+        width: 100%;
+        height: 49px;
+        padding: 0 46px 0 17px;
+        border: 1px solid #3c3f44;
+        border-radius: 6px;
+        outline: none;
+        background: #1a1c1f;
+        color: #e6e8ec;
+        text-align: center;
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: 14px;
+        letter-spacing: 0.04em;
+        transition:
+          border-color 0.18s,
+          box-shadow 0.18s;
+      }
+      .secret-input::placeholder {
+        color: #777e89;
+        opacity: 1;
+      }
+      .secret-input:focus {
+        border-color: #718dbb;
+        box-shadow: 0 0 0 3px #718dbb24;
+      }
+      .clear-button {
+        position: absolute;
+        top: 7px;
+        right: 7px;
+        width: 35px;
+        height: 35px;
+        display: none;
+        place-items: center;
+        border: 0;
+        border-radius: 5px;
+        background: transparent;
+        color: #9097a2;
+        cursor: pointer;
+      }
+      .clear-button:hover {
+        background: #2a2d31;
+        color: #e3e6eb;
+      }
+      .secret-form.has-value .clear-button {
+        display: grid;
+      }
+      .error {
+        min-height: 19px;
+        margin: 9px 0 0;
+        color: #df8d8d;
+        font-size: 12px;
+      }
 
-    .code-card {
-      visibility: hidden; opacity: 0; width: min(100%, 448px); min-height: 134px; margin: 18px auto 0; padding: 18px 20px 15px;
-      border: 1px solid #363a40; border-radius: 8px; background: #1b1d20; text-align: left;
-    }
-    .code-card.visible { visibility: visible; opacity: 1; }
-    .code-topline { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 12px; }
-    .live-indicator { display: inline-flex; align-items: center; gap: 7px; }
-    .live-indicator::before { width: 7px; height: 7px; border-radius: 50%; background: #77b692; content: ""; box-shadow: 0 0 9px #77b69255; }
-    .code-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
-    .code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: clamp(37px, 10vw, 48px); font-weight: 650; letter-spacing: .13em; color: #edf0f5; font-variant-numeric: tabular-nums; }
-    .copy-button { display: inline-flex; align-items: center; gap: 7px; padding: 9px 11px; border: 1px solid #3e4248; border-radius: 6px; background: #222529; color: #c5cad3; font-size: 12px; cursor: pointer; }
-    .copy-button:hover { border-color: #626a76; background: #292c31; }
-    .copy-button:focus-visible, .clear-button:focus-visible, a:focus-visible { outline: 2px solid #91a9d0; outline-offset: 3px; }
-    .timer-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; color: var(--muted); font-size: 11px; }
-    .timer-track { height: 3px; flex: 1; overflow: hidden; border-radius: 10px; background: #303338; }
-    .timer-fill { width: 100%; height: 100%; border-radius: inherit; background: #7597cb; transition: width .15s linear; }
+      .code-card {
+        visibility: hidden;
+        opacity: 0;
+        width: min(100%, 448px);
+        min-height: 134px;
+        margin: 18px auto 0;
+        padding: 18px 20px 15px;
+        border: 1px solid #363a40;
+        border-radius: 8px;
+        background: #1b1d20;
+        text-align: left;
+        cursor: pointer;
+        transition:
+          border-color 0.18s ease,
+          background-color 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+      .code-card.visible {
+        visibility: visible;
+        opacity: 1;
+      }
+      .code-card.visible:hover {
+        border-color: #41464d;
+        background: #1d1f22;
+        box-shadow: 0 2px 10px #0002;
+      }
+      .code-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 8px;
+      }
+      .code {
+        padding: 0;
+        border: 0;
+        background: transparent;
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: clamp(37px, 10vw, 48px);
+        font-weight: 650;
+        letter-spacing: 0.13em;
+        color: #edf0f5;
+        font-variant-numeric: tabular-nums;
+        text-align: center;
+        cursor: pointer;
+      }
+      .code:hover {
+        color: #edf0f5;
+      }
+      .code-card:focus-visible,
+      .clear-button:focus-visible,
+      a:focus-visible {
+        outline: 2px solid #91a9d0;
+        outline-offset: 3px;
+        border-radius: 3px;
+      }
+      .timer-row {
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .timer-track {
+        width: 100%;
+        height: 3px;
+        overflow: hidden;
+        border-radius: 10px;
+        background: #303338;
+      }
+      .timer-fill {
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background: #7597cb;
+        transition: width 0.15s linear;
+      }
+      .toast {
+        position: fixed;
+        z-index: 5;
+        left: 50%;
+        bottom: 22px;
+        padding: 9px 14px;
+        border: 1px solid #3b4149;
+        border-radius: 7px;
+        background: #22262b;
+        color: #cbd3de;
+        font-size: 12px;
+        box-shadow: 0 5px 18px #0004;
+        opacity: 0;
+        visibility: hidden;
+        transform: translate(-50%, 5px);
+        transition:
+          opacity 0.16s ease,
+          transform 0.16s ease,
+          visibility 0.16s;
+      }
+      .toast.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, 0);
+      }
 
-    @media (max-width: 520px) {
-      .page { width: min(100% - 28px, 760px); }
-      main { padding: 24px 0; }
-    }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
-  </style>
-</head>
-<body>
-  <div class="page">
-    <main>
-      <h1>2FA Code Generator</h1>
-      <form class="secret-form" id="secretForm" autocomplete="off" onsubmit="return false">
-        <label for="secret" hidden>Секретный ключ Base32</label>
-        <input class="secret-input" id="secret" type="text" inputmode="text" spellcheck="false" autocapitalize="characters" autocomplete="off" placeholder="Enter secret code (Base32)" aria-describedby="error" aria-invalid="false">
-        <button class="clear-button" id="clear" type="button" aria-label="Очистить ключ" title="Очистить"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
-      </form>
-      <p class="error" id="error" role="status" aria-live="polite"></p>
+      @media (max-width: 520px) {
+        .page {
+          width: min(100% - 28px, 760px);
+        }
+        main {
+          padding: 24px 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <main>
+        <h1>2FA Code Generator</h1>
+        <form
+          class="secret-form"
+          id="secretForm"
+          autocomplete="off"
+          onsubmit="return false;"
+        >
+          <label for="secret" hidden>Секретный ключ Base32</label>
+          <input
+            class="secret-input"
+            id="secret"
+            type="text"
+            inputmode="text"
+            spellcheck="false"
+            autocapitalize="characters"
+            autocomplete="off"
+            placeholder="Enter secret code"
+            aria-describedby="error"
+            aria-invalid="false"
+          />
+          <button
+            class="clear-button"
+            id="clear"
+            type="button"
+            aria-label="Очистить ключ"
+            title="Очистить"
+          >
+            <svg
+              width="17"
+              height="17"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path d="m6 6 12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </form>
+        <p class="error" id="error" role="status" aria-live="polite"></p>
 
-      <section class="code-card" id="codeCard" aria-live="polite" aria-label="Текущий код подтверждения">
-        <div class="code-topline"><span>Ваш код подтверждения</span><span class="live-indicator">Обновляется автоматически</span></div>
-        <div class="code-row"><output class="code" id="code">------</output><button class="copy-button" id="copy" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg><span>Копировать</span></button></div>
-        <div class="timer-row"><span>Новый код через <b id="seconds">30</b> сек.</span><div class="timer-track" aria-hidden="true"><div class="timer-fill" id="timerFill"></div></div></div>
-      </section>
+        <section
+          class="code-card"
+          id="codeCard"
+          role="button"
+          tabindex="0"
+          aria-label="Скопировать код подтверждения"
+        >
+          <div class="code-row">
+            <span class="code" id="code" aria-live="polite" aria-atomic="true"
+              >------</span
+            >
+          </div>
+          <div class="timer-row">
+            <span><b id="seconds">30</b> сек.</span>
+            <div class="timer-track" aria-hidden="true">
+              <div class="timer-fill" id="timerFill"></div>
+            </div>
+          </div>
+        </section>
+        <div class="toast" id="toast" role="status" aria-live="polite">
+          Код скопирован
+        </div>
+      </main>
+    </div>
 
+    <script>
+      (() => {
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+        const form = document.getElementById("secretForm");
+        const input = document.getElementById("secret");
+        const error = document.getElementById("error");
+        const card = document.getElementById("codeCard");
+        const codeOutput = document.getElementById("code");
+        const secondsOutput = document.getElementById("seconds");
+        const timerFill = document.getElementById("timerFill");
+        const toast = document.getElementById("toast");
+        const storageKey = "auth-tools-totp-secret";
+        let secretBytes = null;
+        let lastCounter = -1;
+        let updateRunning = false;
+        let secretVersion = 0;
+        let toastTimer;
 
-    </main>
-  </div>
+        function decodeBase32(value) {
+          const normalized = value.toUpperCase().replace(/[\s=-]/g, "");
+          if (!normalized) return null;
+          if (!/^[A-Z2-7]+$/.test(normalized))
+            throw new Error("Используйте только символы A–Z и цифры 2–7.");
+          let bits = 0;
+          let buffer = 0;
+          const bytes = [];
+          for (const char of normalized) {
+            buffer = (buffer << 5) | alphabet.indexOf(char);
+            bits += 5;
+            if (bits >= 8) {
+              bits -= 8;
+              bytes.push((buffer >> bits) & 255);
+            }
+          }
+          if (bits > 0 && (buffer & ((1 << bits) - 1)) !== 0)
+            throw new Error("Проверьте Base32-ключ: некорректное окончание.");
+          if (!bytes.length)
+            throw new Error("Введите корректный секретный ключ Base32.");
+          return new Uint8Array(bytes);
+        }
 
-  <script>
-    (() => {
-      const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-      const form = document.getElementById('secretForm');
-      const input = document.getElementById('secret');
-      const error = document.getElementById('error');
-      const card = document.getElementById('codeCard');
-      const codeOutput = document.getElementById('code');
-      const secondsOutput = document.getElementById('seconds');
-      const timerFill = document.getElementById('timerFill');
-      const copyButton = document.getElementById('copy');
-      const storageKey = 'auth-tools-totp-secret';
-      let secretBytes = null;
-      let lastCounter = -1;
-      let updateRunning = false;
+        async function makeCode(counter, keyBytes) {
+          const key = await crypto.subtle.importKey(
+            "raw",
+            keyBytes,
+            { name: "HMAC", hash: "SHA-1" },
+            false,
+            ["sign"],
+          );
+          const message = new Uint8Array(8);
+          let value = BigInt(counter);
+          for (let i = 7; i >= 0; i--) {
+            message[i] = Number(value & 255n);
+            value >>= 8n;
+          }
+          const digest = new Uint8Array(
+            await crypto.subtle.sign("HMAC", key, message),
+          );
+          const offset = digest[digest.length - 1] & 15;
+          const binary =
+            ((digest[offset] & 127) << 24) |
+            (digest[offset + 1] << 16) |
+            (digest[offset + 2] << 8) |
+            digest[offset + 3];
+          return String(binary % 1_000_000).padStart(6, "0");
+        }
 
-      function decodeBase32(value) {
-        const normalized = value.toUpperCase().replace(/[\s=-]/g, '');
-        if (!normalized) return null;
-        if (!/^[A-Z2-7]+$/.test(normalized)) throw new Error('Используйте только символы A–Z и цифры 2–7.');
-        let bits = 0;
-        let buffer = 0;
-        const bytes = [];
-        for (const char of normalized) {
-          buffer = (buffer << 5) | alphabet.indexOf(char);
-          bits += 5;
-          if (bits >= 8) {
-            bits -= 8;
-            bytes.push((buffer >> bits) & 255);
+        async function update() {
+          const now = Date.now() / 1000;
+          const counter = Math.floor(now / 30);
+          const remaining = 30 - Math.floor(now % 30);
+          secondsOutput.textContent = String(remaining);
+          timerFill.style.width = `${(remaining / 30) * 100}%`;
+          if (!secretBytes || counter === lastCounter || updateRunning) return;
+          const keyBytes = secretBytes;
+          const version = secretVersion;
+          updateRunning = true;
+          try {
+            const code = await makeCode(counter, keyBytes);
+            if (
+              version === secretVersion &&
+              counter === Math.floor(Date.now() / 30000)
+            ) {
+              codeOutput.textContent = code;
+              lastCounter = counter;
+            }
+          } catch {
+            if (version === secretVersion)
+              showError(
+                "Генерация недоступна в этом браузере. Откройте страницу по HTTPS или локально.",
+              );
+          } finally {
+            updateRunning = false;
           }
         }
-        if (bits > 0 && (buffer & ((1 << bits) - 1)) !== 0) throw new Error('Проверьте Base32-ключ: некорректное окончание.');
-        if (!bytes.length) throw new Error('Введите корректный секретный ключ Base32.');
-        return new Uint8Array(bytes);
-      }
 
-      async function makeCode(counter) {
-        const key = await crypto.subtle.importKey('raw', secretBytes, { name: 'HMAC', hash: 'SHA-1' }, false, ['sign']);
-        const message = new Uint8Array(8);
-        let value = BigInt(counter);
-        for (let i = 7; i >= 0; i--) { message[i] = Number(value & 255n); value >>= 8n; }
-        const digest = new Uint8Array(await crypto.subtle.sign('HMAC', key, message));
-        const offset = digest[digest.length - 1] & 15;
-        const binary = ((digest[offset] & 127) << 24) | (digest[offset + 1] << 16) | (digest[offset + 2] << 8) | digest[offset + 3];
-        return String(binary % 1_000_000).padStart(6, '0');
-      }
+        function showError(message, invalid = false) {
+          error.textContent = message;
+          input.setAttribute("aria-invalid", invalid ? "true" : "false");
+        }
 
-      async function update() {
-        const now = Date.now() / 1000;
-        const counter = Math.floor(now / 30);
-        const remaining = 30 - Math.floor(now % 30);
-        secondsOutput.textContent = String(remaining);
-        timerFill.style.width = `${(remaining / 30) * 100}%`;
-        if (!secretBytes || counter === lastCounter || updateRunning) return;
-        updateRunning = true;
+        function showToast(message) {
+          toast.textContent = message;
+          toast.classList.add("visible");
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(
+            () => toast.classList.remove("visible"),
+            1400,
+          );
+        }
+
+        input.addEventListener("input", () => {
+          form.classList.toggle("has-value", input.value.length > 0);
+          secretVersion += 1;
+          lastCounter = -1;
+          codeOutput.textContent = "------";
+          try {
+            if (input.value.trim())
+              localStorage.setItem(storageKey, input.value);
+            else localStorage.removeItem(storageKey);
+          } catch {
+            /* Storage may be unavailable in private browsing. */
+          }
+          try {
+            secretBytes = decodeBase32(input.value);
+            showError("");
+            card.classList.toggle("visible", Boolean(secretBytes));
+            if (secretBytes) update();
+          } catch (err) {
+            secretBytes = null;
+            card.classList.remove("visible");
+            showError(err.message, true);
+          }
+        });
+
+        document.getElementById("clear").addEventListener("click", () => {
+          input.value = "";
+          input.dispatchEvent(new Event("input"));
+          input.focus();
+        });
+
+        async function copyCode() {
+          if (!/^\d{6}$/.test(codeOutput.textContent)) return;
+          try {
+            await navigator.clipboard.writeText(codeOutput.textContent);
+            showToast("Код скопирован");
+          } catch {
+            showToast(
+              "Не удалось скопировать код. Выделите его и скопируйте вручную.",
+            );
+          }
+        }
+
+        card.addEventListener("click", copyCode);
+        card.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            copyCode();
+          }
+        });
+
         try {
-          const code = await makeCode(counter);
-          if (counter === Math.floor(Date.now() / 30000)) {
-            codeOutput.textContent = code;
-            lastCounter = counter;
+          const savedSecret = localStorage.getItem(storageKey);
+          if (savedSecret) {
+            input.value = savedSecret;
+            input.dispatchEvent(new Event("input"));
           }
         } catch {
-          showError('Генерация недоступна в этом браузере. Откройте страницу по HTTPS или локально.');
-        } finally { updateRunning = false; }
-      }
-
-      function showError(message) {
-        error.textContent = message;
-        input.setAttribute('aria-invalid', message ? 'true' : 'false');
-      }
-
-      input.addEventListener('input', () => {
-        form.classList.toggle('has-value', input.value.length > 0);
-        try {
-          if (input.value.trim()) localStorage.setItem(storageKey, input.value);
-          else localStorage.removeItem(storageKey);
-        } catch { /* Storage may be unavailable in private browsing. */ }
-        lastCounter = -1;
-        try {
-          secretBytes = decodeBase32(input.value);
-          showError('');
-          card.classList.toggle('visible', Boolean(secretBytes));
-          if (secretBytes) update();
-        } catch (err) {
-          secretBytes = null;
-          card.classList.remove('visible');
-          showError(err.message);
+          /* Storage may be unavailable in private browsing. */
         }
-      });
-
-      document.getElementById('clear').addEventListener('click', () => {
-        input.value = '';
-        input.dispatchEvent(new Event('input'));
-        input.focus();
-      });
-
-      copyButton.addEventListener('click', async () => {
-        if (!/^\d{6}$/.test(codeOutput.textContent)) return;
-        const label = copyButton.querySelector('span');
-        try {
-          await navigator.clipboard.writeText(codeOutput.textContent);
-          label.textContent = 'Скопировано';
-          setTimeout(() => { label.textContent = 'Копировать'; }, 1300);
-        } catch {
-          showError('Не удалось скопировать код. Выделите его и скопируйте вручную.');
-        }
-      });
-
-      try {
-        const savedSecret = localStorage.getItem(storageKey);
-        if (savedSecret) {
-          input.value = savedSecret;
-          input.dispatchEvent(new Event('input'));
-        }
-      } catch { /* Storage may be unavailable in private browsing. */ }
-      update();
-      setInterval(update, 200);
-    })();
-  </script>
-</body>
+        update();
+        setInterval(update, 200);
+      })();
+    </script>
+  </body>
 </html>
