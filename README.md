@@ -1,11 +1,11 @@
 # 2FA
 
-**Русский** · [English](README.en.md)
+[Русский](README.ru.md) · **English**
 
-Генератор шестизначных кодов двухфакторной аутентификации (TOTP) по секретному ключу Base32. Код вычисляется в браузере и обновляется каждые 30 секунд.
+Generate six-digit two-factor authentication codes (TOTP) from a Base32 secret key. Codes are generated in your browser and refresh every 30 seconds.
 
-## Как пользоваться
+## How to use
 
-1. Скачайте файлы проекта и откройте `index.html` в браузере.
-2. Вставьте секретный ключ, который сервис выдал при настройке двухфакторной аутентификации.
-3. Нажмите на код, чтобы скопировать его, и введите его на сайте сервиса.
+1. Download the project files and open `index.html` in your browser.
+2. Paste the secret key provided by the service when you set up two-factor authentication.
+3. Click the code to copy it, then enter it on the service's website.
